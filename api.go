@@ -29,12 +29,19 @@ func main() {
 		} else {
 			defer response.Body.Close()
 			var by []byte
+
 			by, _ = ioutil.ReadAll(response.Body)
-			doc, err := readability.NewDocument(string(by))
+			html := string(by)
+			doc, err := readability.NewDocument(html)
+			title := GetTitle(html)
 			if err != nil {
 				// do something ...
 			}
-			r.JSON(200, map[string]interface{}{"content": doc.Content(), "url": url})
+			r.JSON(200, map[string]interface{}{
+				"content": doc.Content(),
+				"url": url,
+				"title": title,
+			})
 		}
 	})
 
