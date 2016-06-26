@@ -45,6 +45,7 @@ func main() {
 
 		_bodyBytes, _ = ioutil.ReadAll(response.Body)
 		html = string(_bodyBytes)
+		InitDocument(html)
 
 		switch contentType {
 		case "html":
@@ -55,7 +56,7 @@ func main() {
 				content = doc.Content()
 			}
 
-			title = GetTitle(html)
+			title = GetTitle()
 			break
 		}
 
@@ -64,6 +65,7 @@ func main() {
 			"type": contentType,
 			"title": title,
 			"content": content,
+			"images": GetImages(),
 		})
 	})
 
