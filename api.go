@@ -5,11 +5,12 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
 func main() {
+	InitConfig()
+
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
 		Charset: "UTF-8",
@@ -25,22 +26,31 @@ func main() {
 		url := req.URL.Query()["url"][0]
 		response, err := http.Get(string(url))
 		if err != nil {
-			log.Fatal(err)
+			r.JSON(500, map[string]interface{}{
+				"code": 500,
+				"message": err.Error(),
+			})
 		} else {
 			defer response.Body.Close()
 			var by []byte
+			var content string
 
 			by, _ = ioutil.ReadAll(response.Body)
 			html := string(by)
 			doc, err := readability.NewDocument(html)
-			title := GetTitle(html)
 			if err != nil {
-				// do something ...
+				content = ""
+			} else {
+				content = doc.Content()
 			}
+
+			title := GetTitle(html)
+
 			r.JSON(200, map[string]interface{}{
-				"content": doc.Content(),
+				"content": content,
 				"url": url,
 				"title": title,
+				"type": GetType(response),
 			})
 		}
 	})

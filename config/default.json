@@ -1,0 +1,11 @@
+{
+  "contentTypes": {
+    "rss": [
+      "application/rss+xml"
+    ],
+    "html": [
+      "application/html",
+      "text/html"
+    ]
+  }
+}
