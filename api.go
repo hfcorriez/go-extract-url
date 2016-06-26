@@ -66,6 +66,8 @@ func main() {
 			"title": title,
 			"content": content,
 			"images": GetImages(),
+			"description": GetDescription(),
+			"keywords": GetKeywords(),
 		})
 	})
 

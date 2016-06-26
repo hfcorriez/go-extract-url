@@ -22,6 +22,34 @@ func GetTitle() string {
 	return doc.Find("title").Text()
 }
 
+func GetDescription() string {
+	metaSection := doc.Find("meta[name=description]")
+	if (metaSection.Length() == 0) {
+		return ""
+	}
+
+	value, exists := metaSection.Attr("content")
+	if (!exists) {
+		return ""
+	}
+
+	return value
+}
+
+func GetKeywords() []string {
+	metaSection := doc.Find("meta[name=keywords]")
+	if (metaSection.Length() == 0) {
+		return make([]string, 0)
+	}
+
+	value, exists := metaSection.Attr("content")
+	if (!exists) {
+		return make([]string, 0)
+	}
+
+	return strings.Split(value, ",")
+}
+
 func GetImages() []string {
 	return doc.Find("img[src]").Map(func(_ int, section *goquery.Selection) string {
 		value, exists := section.Attr("src")
