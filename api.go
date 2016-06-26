@@ -30,13 +30,24 @@ func main() {
 				"code": 500,
 				"message": err.Error(),
 			})
-		} else {
-			defer response.Body.Close()
-			var by []byte
-			var content string
+			return
+		}
 
-			by, _ = ioutil.ReadAll(response.Body)
-			html := string(by)
+		defer response.Body.Close()
+
+		var _bodyBytes []byte
+		var content string
+		var title string
+		var contentType string
+		var html string
+
+		contentType = GetType(response)
+
+		_bodyBytes, _ = ioutil.ReadAll(response.Body)
+		html = string(_bodyBytes)
+
+		switch contentType {
+		case "html":
 			doc, err := readability.NewDocument(html)
 			if err != nil {
 				content = ""
@@ -44,15 +55,16 @@ func main() {
 				content = doc.Content()
 			}
 
-			title := GetTitle(html)
-
-			r.JSON(200, map[string]interface{}{
-				"content": content,
-				"url": url,
-				"title": title,
-				"type": GetType(response),
-			})
+			title = GetTitle(html)
+			break
 		}
+
+		r.JSON(200, map[string]interface{}{
+			"url": url,
+			"type": contentType,
+			"title": title,
+			"content": content,
+		})
 	})
 
 	m.Run()
